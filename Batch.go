@@ -1,6 +1,7 @@
 package batch
 
 import (
+	"errors"
 	"time"
 )
 
@@ -72,11 +73,27 @@ func (b *Job) Writer(w Writer) Job {
 	return *b
 }
 
-func (b *Job) Execute() {
+func (b *Job) Execute() error {
 
 	reader := b.reader
 	processor := b.processor
 	writer := b.writer
+
+	if reader == nil {
+		return errors.New("There is no Reader")
+	}
+
+	if processor == nil {
+		return errors.New("There is no Processor")
+	}
+
+	if writer == nil {
+		return errors.New("There is no Writer")
+	}
+
+	/**
+	 * Start Our Main Loop
+	 */
 
 	reader.open()
 
@@ -88,4 +105,6 @@ func (b *Job) Execute() {
 
 	reader.close()
 	writer.close()
+
+	return nil
 }
