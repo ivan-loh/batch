@@ -90,3 +90,4 @@ func (b *Batch) execute() {
 	writer.close()
 }
 
+func main() {}
