@@ -81,7 +81,7 @@ func (b *Batch) execute() {
 	reader.open()
 
 	record := reader.read()
-	for record {
+	for record != nil {
 		writer.writeRecord(processor.processRecord(record))
 		record = reader.read()
 	}
