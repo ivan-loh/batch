@@ -48,31 +48,31 @@ type Writer interface {
 }
 
 /**
- * Batch Definition/Flow
+ * Job Definition/Flow
  */
 
-type Batch struct {
+type Job struct {
 	reader    Reader
 	processor Processor
 	writer    Writer
 }
 
-func (b *Batch) setReader(r Reader) Batch {
+func (b *Job) Reader(r Reader) Job {
 	b.reader = r
 	return *b
 }
 
-func (b *Batch) setProcessor(p Processor) Batch {
+func (b *Job) Processor(p Processor) Job {
 	b.processor = p
 	return *b
 }
 
-func (b *Batch) setWriter(w Writer) Batch {
+func (b *Job) Writer(w Writer) Job {
 	b.writer = w
 	return *b
 }
 
-func (b *Batch) execute() {
+func (b *Job) Execute() {
 
 	reader := b.reader
 	processor := b.processor
@@ -88,8 +88,4 @@ func (b *Batch) execute() {
 
 	reader.close()
 	writer.close()
-}
-
-func main() {
-	// something something something
 }
