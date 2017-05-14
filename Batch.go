@@ -8,7 +8,7 @@ import "errors"
 
 type Reader interface {
 	Open()
-	Read() (interface{}, error)
+	Read() interface{}
 	Close()
 }
 
@@ -17,7 +17,7 @@ type Reader interface {
  */
 
 type Processor interface {
-	Process(r interface{}) (interface{}, error)
+	Process(r interface{}) interface{}
 }
 
 /**
@@ -78,11 +78,11 @@ func (b *Job) Execute() error {
 
 	reader.Open()
 
-	record, _ := reader.Read()
+	record := reader.Read()
 	for record != nil {
-		processed, _ := processor.Process(record)
+		processed := processor.Process(record)
 		writer.Write(processed)
-		record, _ = reader.Read()
+		record = reader.Read()
 	}
 
 	reader.Close()
