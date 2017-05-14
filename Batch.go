@@ -1,9 +1,6 @@
 package batch
 
-import (
-	"errors"
-	"time"
-)
+import "errors"
 
 /**
  * Reader
@@ -11,7 +8,7 @@ import (
 
 type Reader interface {
 	Open()
-	Read() Record
+	Read() (interface{}, error)
 	Close()
 }
 
@@ -20,22 +17,7 @@ type Reader interface {
  */
 
 type Processor interface {
-	ProcessRecord(r Record) Record
-}
-
-/**
- * Record
- */
-
-type Record interface {
-	Header() Header
-	Payload() map[string]interface{}
-}
-
-type Header struct {
-	Number   int64
-	Source   string
-	Creation time.Time
+	Process(r interface{}) (interface{}, error)
 }
 
 /**
@@ -44,12 +26,13 @@ type Header struct {
 
 type Writer interface {
 	Open()
-	WriteRecord(record Record)
+	Write(record interface{}) error
 	Close()
 }
 
 /**
  * Job Definition/Flow
+ * Reader -> Processor -> Writer
  */
 
 type Job struct {
@@ -58,19 +41,16 @@ type Job struct {
 	writer    Writer
 }
 
-func (b *Job) Reader(r Reader) Job {
+func (b *Job) Reader(r Reader) {
 	b.reader = r
-	return *b
 }
 
-func (b *Job) Processor(p Processor) Job {
+func (b *Job) Processor(p Processor) {
 	b.processor = p
-	return *b
 }
 
-func (b *Job) Writer(w Writer) Job {
+func (b *Job) Writer(w Writer) {
 	b.writer = w
-	return *b
 }
 
 func (b *Job) Execute() error {
@@ -93,14 +73,16 @@ func (b *Job) Execute() error {
 
 	/**
 	 * Start Our Main Loop
+	 * todo: handle the errors :(
 	 */
 
 	reader.Open()
 
-	record := reader.Read()
+	record, _ := reader.Read()
 	for record != nil {
-		writer.WriteRecord(processor.ProcessRecord(record))
-		record = reader.Read()
+		processed, _ := processor.Process(record)
+		writer.Write(processed)
+		record, _ = reader.Read()
 	}
 
 	reader.Close()
