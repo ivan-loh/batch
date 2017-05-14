@@ -10,9 +10,9 @@ import (
  */
 
 type Reader interface {
-	open()
-	read() Record
-	close()
+	Open()
+	Read() Record
+	Close()
 }
 
 /**
@@ -20,7 +20,7 @@ type Reader interface {
  */
 
 type Processor interface {
-	processRecord(r Record) Record
+	ProcessRecord(r Record) Record
 }
 
 /**
@@ -28,14 +28,14 @@ type Processor interface {
  */
 
 type Record interface {
-	header() Header
-	payload() map[string]interface{}
+	Header() Header
+	Payload() map[string]interface{}
 }
 
 type Header struct {
-	number       int64
-	source       string
-	creationDate time.Time
+	Number   int64
+	Source   string
+	Creation time.Time
 }
 
 /**
@@ -43,9 +43,9 @@ type Header struct {
  */
 
 type Writer interface {
-	open()
-	writeRecord(record Record)
-	close()
+	Open()
+	WriteRecord(record Record)
+	Close()
 }
 
 /**
@@ -95,16 +95,16 @@ func (b *Job) Execute() error {
 	 * Start Our Main Loop
 	 */
 
-	reader.open()
+	reader.Open()
 
-	record := reader.read()
+	record := reader.Read()
 	for record != nil {
-		writer.writeRecord(processor.processRecord(record))
-		record = reader.read()
+		writer.WriteRecord(processor.ProcessRecord(record))
+		record = reader.Read()
 	}
 
-	reader.close()
-	writer.close()
+	reader.Close()
+	writer.Close()
 
 	return nil
 }
