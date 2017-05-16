@@ -2,8 +2,11 @@
 - logging
 - job status
 
+### Sample
 ```golang
+
 // Reader
+
 type genericReader struct {
 	name    string
 	counter int
@@ -28,7 +31,9 @@ func (this *genericReader) Read() interface{} {
 	return nil
 }
 
+
 // Processor
+
 type genericProcessor struct{
 	append string
 }
@@ -36,6 +41,7 @@ type genericProcessor struct{
 func (this *genericProcessor) Process(d interface{}) interface{} {
 	return d.(string) + this.append
 }
+
 
 // Writer
 
