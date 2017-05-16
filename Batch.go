@@ -77,6 +77,7 @@ func (b *Job) Execute() error {
 	 */
 
 	reader.Open()
+	writer.Open()
 
 	record := reader.Read()
 	for record != nil {
